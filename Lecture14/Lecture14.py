@@ -24,27 +24,28 @@ for index in genes_file:
 
 #Print out the gene names for all genes that are between 90 and 110 bases long.
 for index in genes_file:
-    index_list = index.split(",")
-    if (len(index_list[1]) > 90) and (len(index_list[1]) < 110):
-        print(index_list[2])
+    if index != "":
+        index_list = index.split(",")
+        if (len(index_list[1]) > 90) and (len(index_list[1]) < 110):
+            print(index_list[2])
 #kdy647
 #teg436
 
 #Print out the gene names for all genes whose AT content is less than 0.5 and whose expression level is greater than 200.
 for index in genes_file:
     index_list = index.split(",")
-    #print(index_list[1])
-    #print((index_list[1].upper().count("A")+index_list[1].upper().count("T"))/len(index_list[1]))
-    if ((index_list[1].upper().count("A")+index_list[1].upper().count("T"))/len(index_list[1])) < 0.5 and (int(index_list[3]) > 200):
-        print(index_list[2])
+    if index != "":
+        if ((index_list[1].upper().count("A")+index_list[1].upper().count("T"))/len(index_list[1])) < 0.5 and (int(index_list[3]) > 200):
+            print(index_list[2])
 #teg436
 
 #Print out the gene names for all genes whose name begins with "k" or "h" except those belonging to Drosophila melanogaster.
 for index in genes_file:
     index_list = index.split(",")
-    if index_list[0] != "Drosophila melanogaster":
-        if index_list[2].startswith("k") or index_list[2].startswith("h"):
-            print(index_list[2])
+    if index != "":
+        if index_list[0] != "Drosophila melanogaster":
+            if index_list[2].startswith("k") or index_list[2].startswith("h"):
+                print(index_list[2])
 #kdy533
 #hdt739
 #hdu045
@@ -52,14 +53,13 @@ for index in genes_file:
 #For each gene, print out a message giving the gene name and saying whether its AT content is high (greater than 0.65), low (less than 0.45) or medium (between 0.45 and 0.65).
 for index in genes_file:
     index_list = index.split(",")
-    #print(index_list[1])
-    #print((index_list[1].upper().count("A")+index_list[1].upper().count("T"))/len(index_list[1]))
-    if ((index_list[1].upper().count("A")+index_list[1].upper().count("T"))/len(index_list[1])) > 0.65:
-        print(index_list[2] + " has high AT content.")
-    elif ((index_list[1].upper().count("A")+index_list[1].upper().count("T"))/len(index_list[1])) < 0.45:
-        print(index_list[2] + " has low AT content.")
-    elif ((index_list[1].upper().count("A")+index_list[1].upper().count("T"))/len(index_list[1])) > 0.45 and ((index_list[1].upper().count("A")+index_list[1].upper().count("T"))/len(index_list[1])) < 0.65:
-        print(index_list[2] + " has medium AT content.")
+    if index != "":
+        if ((index_list[1].upper().count("A")+index_list[1].upper().count("T"))/len(index_list[1])) > 0.65:
+            print(index_list[2] + " has high AT content.")
+        elif ((index_list[1].upper().count("A")+index_list[1].upper().count("T"))/len(index_list[1])) < 0.45:
+            print(index_list[2] + " has low AT content.")
+        elif ((index_list[1].upper().count("A")+index_list[1].upper().count("T"))/len(index_list[1])) > 0.45 and ((index_list[1].upper().count("A")+index_list[1].upper().count("T"))/len(index_list[1])) < 0.65:
+            print(index_list[2] + " has medium AT content.")
 #kdy647 has high AT content.
 #jdg766 has medium AT content.
 #kdy533 has medium AT content.
@@ -112,43 +112,59 @@ for base in dna:
 #assign the sequences to a list variable
 sequences = ['ATTGTACGG', 'AATGAACCG', 'AATGAACCC', 'AATGGGAAT']
 
-#assign each sequence its own variable
-seq1 = sequences[0]
-seq2 = sequences[1]
-seq3 = sequences[2]
-seq4 = sequences[3]
+#bubzy's method:
+for first_seq in range(len(sequences)):
+    for second_seq in range((first_seq+1), len(sequences)):
+        count=0
+        for index in range(len(sequences[first_seq])):
+            if sequences[first_seq][index] == sequences[second_seq][index]:
+                count+=1
+        print(f"Percentage of identical positions between sequence {first_seq+1} and {second_seq+1} is {(count/len(sequences[first_seq]))*100}")
 
-#set the index and count variables to zero
-i=0
-count1=0 #number of identical bases at the same positions for sequences 1 and 2
-count2=0 #number of identical bases at the same positions for sequences 1 and 3
-count3=0 #number of identical bases at the same positions for sequences 1 and 4
-count4=0 #number of identical bases at the same positions for sequences 2 and 3
-count5=0 #number of identical bases at the same positions for sequences 2 and 4
-count6=0 #number of identical bases at the same positions for sequences 3 and 4
+#Percentage of identical positions between sequence 1 and 2 is 66.66666666666666
+#Percentage of identical positions between sequence 1 and 3 is 55.55555555555556
+#Percentage of identical positions between sequence 1 and 4 is 33.33333333333333
+#Percentage of identical positions between sequence 2 and 3 is 88.88888888888889
+#Percentage of identical positions between sequence 2 and 4 is 44.44444444444444
+#Percentage of identical positions between sequence 3 and 4 is 44.44444444444444
 
-#write a loop for counting 
-for base in seq1:
-    if seq1[i] == seq2[i]:
-        count1+=1
-    if seq1[i] == seq3[i]:
-        count2+=1
-    if seq1[i] == seq4[i]:
-        count3+=1
-    if seq2[i] == seq3[i]:
-        count4+=1
-    if seq2[i] == seq4[i]:
-        count5+=1
-    if seq3[i] == seq4[i]:
-        count6+=1
-    i+=1
+# #assign each sequence its own variable
+# seq1 = sequences[0]
+# seq2 = sequences[1]
+# seq3 = sequences[2]
+# seq4 = sequences[3]
 
-print("Percentage of identical positions between the first and the second sequence is " + str((count1/len(seq1))*100))
-print("Percentage of identical positions between the first and the third sequence is " + str((count2/len(seq1))*100))
-print("Percentage of identical positions between the first and the fourth sequence is " + str((count3/len(seq1))*100))
-print("Percentage of identical positions between the second and the third sequence is " + str((count4/len(seq2))*100))
-print("Percentage of identical positions between the second and the fourth sequence is " + str((count5/len(seq2))*100))
-print("Percentage of identical positions between the third and the fourth sequence is " + str((count6/len(seq3))*100))
+# #set the index and count variables to zero
+# i=0
+# count1=0 #number of identical bases at the same positions for sequences 1 and 2
+# count2=0 #number of identical bases at the same positions for sequences 1 and 3
+# count3=0 #number of identical bases at the same positions for sequences 1 and 4
+# count4=0 #number of identical bases at the same positions for sequences 2 and 3
+# count5=0 #number of identical bases at the same positions for sequences 2 and 4
+# count6=0 #number of identical bases at the same positions for sequences 3 and 4
+
+# #write a loop for counting 
+# for base in seq1:
+#     if seq1[i] == seq2[i]:
+#         count1+=1
+#     if seq1[i] == seq3[i]:
+#         count2+=1
+#     if seq1[i] == seq4[i]:
+#         count3+=1
+#     if seq2[i] == seq3[i]:
+#         count4+=1
+#     if seq2[i] == seq4[i]:
+#         count5+=1
+#     if seq3[i] == seq4[i]:
+#         count6+=1
+#     i+=1
+
+# print("Percentage of identical positions between the first and the second sequence is " + str((count1/len(seq1))*100))
+# print("Percentage of identical positions between the first and the third sequence is " + str((count2/len(seq1))*100))
+# print("Percentage of identical positions between the first and the fourth sequence is " + str((count3/len(seq1))*100))
+# print("Percentage of identical positions between the second and the third sequence is " + str((count4/len(seq2))*100))
+# print("Percentage of identical positions between the second and the fourth sequence is " + str((count5/len(seq2))*100))
+# print("Percentage of identical positions between the third and the fourth sequence is " + str((count6/len(seq3))*100))
 
 #first try that didn't work:
 '''
