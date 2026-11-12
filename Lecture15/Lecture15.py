@@ -103,7 +103,7 @@ def percent_aa(prot_seq, aa_residue):
     for aa in prot_seq:
         if aa == aa_residue:
             count+=1
-    #result = f"The percentage of the protein that the amino acid residue makes up: " + str((count/len(prot_seq))*100) + "%"
+    print(f"The percentage of the protein that the amino acid residue makes up: " + str((count/len(prot_seq))*100) + "%")
     result = (count/len(prot_seq))*100
     return result
 
@@ -161,22 +161,119 @@ def undetermined_bases(dna_seq, thresh=0.5):
 #undetermined_bases("ACTGAC")
 
 #Write some assertions to test whether the function works.
+assert undetermined_bases("atcgtgtcgtgatgtATGCTGT", 0.4) == False
+assert undetermined_bases("ATCGssss", 0.8) == False
+assert undetermined_bases("AAAAAAAAASSSaaaaa", 0) == True
+assert undetermined_bases("AAAAAAAhhhhhheeeeeeeeeeeeeeeeAAAhfsdgfukdaaaa", 0.5) == True
 
 '''Exercise 4: Joined up SQL functions'''
 #Using the lecture notes as a guide, write functions that will show the structure of a database table chosen by you, the user (i.e. one fuction might rely on the output 
 #from the other).
 
+def select_SQL_table():
+    connection = None
+    try:
+        connection = MySQLdb.connect(
+            host="127.0.0.1",      
+            user="s3030309",
+            passwd="yt1doswasplmsdT!",
+            db="s3030309_blast"
+        )
+        cursor = connection.cursor()
+        # Fetch all tables in the database
+        cursor.execute("SHOW TABLES")
+        tables = [row[0] for row in cursor.fetchall()]
+        # Error trap...        
+        if not tables:
+            print("No tables found in this database.")
+            return None
+        # Display the tables as a numbered menu
+        print("\nAvailable Tables:")
+        print("-" * 30)
+        for index, table_name in enumerate(tables, 1):
+            print(f"[{index}] {table_name}")
+        print("-" * 30)
+        # Get the user to choose one!
+        while True:
+            try:
+                choice = input(f"Pick a table number (1-{len(tables)}) or 'q' to quit: ").strip()
+                if choice.lower() == 'q':
+                    return None
+                    
+                choice_num = int(choice)
+                if 1 <= choice_num <= len(tables):
+                    return tables[choice_num - 1]
+                else:
+                    print(f"Invalid number. Please choose between 1 and {len(tables)}.")
+            except ValueError:
+                print("Please enter a valid number or 'q'.")
+    except MySQLdb.Error as e:
+        print(f"Database error while fetching tables: {e}")
+        return None
+    finally:
+        if connection and connection.open:
+            cursor.close()
+            connection.close()
+
+def display_SQL_table():
+    selection = select_SQL_table()
+    connection = MySQLdb.connect(
+            host="127.0.0.1",      
+            user="s3030309",
+            passwd="yt1doswasplmsdT!",
+            db="s3030309_blast"
+        )
+    cursor = connection.cursor()
+    SQL_query = "SHOW" + str(selection)
+    cursor.execute(SQL_query)
+    cursor.close()
+    connection.close()
+
+display_SQL_table()
+
 '''Exercise 5: Kmer counting (again!)'''
 #K-mers are short DNA subsequences with length "k" bases, and are usually generated using the sliding window method we used in previous lecture exercises.
-
 #Write a Python function that, given any DNA sequence, will print all the k-mers (e.g. 4-mers) that occur more than n times.
-
 #E.g. with dna="ATGCATCATG", kmersize=2 and minfrequency=2 will output:
 #AT
-
 #because the kmers (kmersize) are 2 bases long, and there are three (minfrequency was 2) instances of "AT"
-
 #Code you wrote for the previous lecture's exercises could be useful here...
+
+#ask user input for the values of 'k', 'n', and the DNA sequence, and assign them to variables to be used in the code
+k = int(input("Enter the desired k-mer length.\n"))
+n = int(input("Enter 'n' (the code will print all the k-mers that occur more than 'n').\n"))
+dna = input("Enter the DNA sequence you wish to analyse (case insensitive).\n").upper()
+
+#write the for loop for the sliding window with the given DNA sequence and k-mer length
+i=0
+for base in dna:
+    if i<(len(dna)-(k-1)):
+        print((i*" ") + dna[i:i+k])
+        i+=1
+
+#write the loop that will only print out the k-mers that occur more than n times
+i=0
+kmer_list = []
+for base in dna:
+    if i<(len(dna)-(k-1)):
+        kmer_list.append(dna[i:i+k])
+        if kmer_list.count(kmer_list[i]) > n:
+            print(kmer_list[i])
+        i+=1
+
+#put this loop into a function definition:
+def kmer_freq(dna: str, k: int, n: int):
+    i=0
+    kmer_list = []
+    for base in dna:
+        if i<(len(dna)-(k-1)):
+            kmer_list.append(dna[i:i+k])
+            if kmer_list.count(kmer_list[i]) > n:
+                print(kmer_list[i])
+            i+=1
+
+#test call:    
+kmer_freq("ATATATGCGGACACAC", 2, 2)
 
 '''Exercise 6: Kmer counting (and yet again!)'''
 #Write a Python script/programme that, given any DNA sequence, will print a list of k-mers that occur more than some number of times.
@@ -185,3 +282,19 @@ def undetermined_bases(dna_seq, thresh=0.5):
     # the sequence of interest
     # the kmer length for analysis
     # the threshold frequency of kmers found (i.e. the "more than this number" value)
+
+def kmer_freq2():
+    dna=input("Please enter DNA sequence: ").upper()
+    k=int(input("Please enter k-mer length: "))
+    n=int(input("Please enter 'n' (the code will print all the k-mers that occur more than 'n'): "))
+    i=0
+    kmer_list = []
+    for base in dna:
+        if i<(len(dna)-(k-1)):
+            kmer_list.append(dna[i:i+k])
+            if kmer_list.count(kmer_list[i]) > n:
+                print(kmer_list[i])
+            i+=1
+
+#test call:
+kmer_freq2()
