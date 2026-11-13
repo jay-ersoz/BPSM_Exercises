@@ -4,9 +4,9 @@ import os, sys, MySQLdb
 try:
     connection = MySQLdb.connect(
         host="127.0.0.1",      
-        user="s3030309",
-        passwd="yt1doswasplmsdT!",
-        db="s3030309_blast"
+        user="sxxxxxx",
+        passwd="xxxxx",
+        db="sxxxxxx_blast"
     )
 # Check our connection works
     cursor = connection.cursor()
@@ -175,9 +175,9 @@ def select_SQL_table():
     try:
         connection = MySQLdb.connect(
             host="127.0.0.1",      
-            user="s3030309",
-            passwd="yt1doswasplmsdT!",
-            db="s3030309_blast"
+            user="sxxxxxx",
+            passwd="xxxxx",
+            db="sxxxxxx_blast"
         )
         cursor = connection.cursor()
         # Fetch all tables in the database
@@ -219,12 +219,13 @@ def display_SQL_table():
     selection = select_SQL_table()
     connection = MySQLdb.connect(
             host="127.0.0.1",      
-            user="s3030309",
-            passwd="yt1doswasplmsdT!",
-            db="s3030309_blast"
+            user="sxxxxxx",
+            passwd="xxxxx",
+            db="sxxxxxx_blast"
         )
     cursor = connection.cursor()
-    SQL_query = "SHOW" + str(selection)
+    cursor.execute(f"DESCRIBE {selection}")
+    SQL_query = "SHOW " + str(selection)
     cursor.execute(SQL_query)
     cursor.close()
     connection.close()
@@ -247,7 +248,7 @@ dna = input("Enter the DNA sequence you wish to analyse (case insensitive).\n").
 #write the for loop for the sliding window with the given DNA sequence and k-mer length
 i=0
 for base in dna:
-    if i<(len(dna)-(k-1)):
+    if i<(len(dna)-(k-1):
         print((i*" ") + dna[i:i+k])
         i+=1
 
